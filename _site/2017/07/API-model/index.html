@@ -6,17 +6,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>Alex Li Tech Blog</title>
-  <meta name="description" content="New features have been adding, old features had been removing, developers are changing, finally we found the market fit, and started to worry about code quality.">
+  <title>API-Model</title>
+  <meta name="description" content="What’s the problem?">
   <meta name="author" content="Wei Wang">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Alex Li Tech Blog">
-  <meta name="twitter:description" content="New features have been adding, old features had been removing, developers are changing, finally we found the market fit, and started to worry about code quality.">
+  <meta name="twitter:title" content="API-Model">
+  <meta name="twitter:description" content="What’s the problem?">
   
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Alex Li Tech Blog">
-  <meta property="og:description" content="New features have been adding, old features had been removing, developers are changing, finally we found the market fit, and started to worry about code quality.">
+  <meta property="og:title" content="API-Model">
+  <meta property="og:description" content="What’s the problem?">
   
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
   <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="canonical" href="http://localhost:4000/2017/07/API-model/">
   <link rel="alternate" type="application/rss+xml" title="Alex Li Tech Blog" href="http://localhost:4000/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -39,7 +39,7 @@
         <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
     </span>
     
-    <header class="panel-cover " style="background-image: url('/assets/images/background-cover.jpg')">
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
   <div class="panel-main">
 
     <div class="panel-main__inner panel-inverted">
@@ -121,36 +121,146 @@
 
     <div class="content-wrapper">
         <div class="content-wrapper__inner">
-            <div class="main-post-list hidden">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2017-07-20 02:32:24 -0400" itemprop="datePublished" class="post-meta__date date">2017-07-20</time> &#8226; <span class="post-meta__tags tags"></span>
+    </div>
+    <h1 class="post-title">API-Model</h1>
+  </header>
 
-  <ol class="post-list">
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/Problems/" title="访问 Problems">Problems</a></h2>
-      <p class="excerpt">What’s the problem?[Chumi] is an attendees-focused event hosting platform, it has payment, instant messaging, and circles feed features. Due to the product is pivoting a lot of times, it leaves unneccesary code and structures. Every time when deve...&hellip;</p>
-      <div class="post-list__meta"><time datetime="2017-07-20 02:32:24 -0400" class="post-list__meta--date date">2017-07-20</time> &#8226; <span class="post-list__meta--tags tags"></span><a class="btn-border-small" href=/2017/07/Problems/>继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2017/07/API-model/" title="访问 API-Model">API-Model</a></h2>
-      <p class="excerpt">What’s the problem?API is hard code on Alamofire requests, or global. It’s hard to edit on one place.####      We use struct to build this model, becasue struct make it unique, and we dont need to inherent the code, it only returns different apis....&hellip;</p>
-      <div class="post-list__meta"><time datetime="2017-07-20 02:32:24 -0400" class="post-list__meta--date date">2017-07-20</time> &#8226; <span class="post-list__meta--tags tags"></span><a class="btn-border-small" href=/2017/07/API-model/>继续阅读</a></div>
-      <hr class="post-list__divider" />
-    </li>
-    
-  </ol>
+  <section class="post">
+    <h4 id="whats-the-problem">What’s the problem?</h4>
 
-  <hr class="post-list__divider " />
+<p>API is hard code on Alamofire requests, or global. It’s hard to edit on one place.</p>
 
-<nav class="pagination" role="navigation">
-    
-    <span class="pagination__page-number">1 / 1</span>
-    
-</nav>
+<p>####</p>
+
+<ol>
+  <li>
+    <p>We use struct to build this model, becasue struct make it unique, and we dont need to inherent the code, it only returns different apis.</p>
+  </li>
+  <li>
+    <p>We use enum inside the struct, so we use the switch func to easily return the specific apis, each enum is a router</p>
+  </li>
+</ol>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+//
+//  ChumiApiClient.swift
+//  chumie
+//
+//  Created by Yitao Li on 2017-07-20.
+//  Copyright © 2017 Yitao Li. All rights reserved.
+//
+
+import Foundation
+import Alamofire
+
+struct ChumiApiClient {
+
+static let hostURL = "http://example.cloudfront.net"
+static let imgHostURL = "http://example.cloudfront.net"
+
+//member relevant router
+enum Member: URLRequestConvertible {
+
+    case login()
+    case checkEmailDuplicate()
+    case register()
+    case registerWithFacebook()
+
+    func asURLRequest() throws -&gt; URLRequest {
+
+    var path = "/member"
+    let parameters: [String: Any] = [:]
+
+    switch self {
+
+    case .checkEmailDuplicate():
+    path = path + "/checkEmail"
+    break
+
+    case .login():
+    path = path + "/login"
+    break
+
+    case .register():
+    path = path + "/reg"
+    break
+
+    case .registerWithFacebook():
+    path = path + "/registerFromFacebook"
+    break
+
+    }
 
 
+
+
+    let destinationURL = URL(string: ChumiApiClient.hostURL)
+    let destinationURLRequest = URLRequest(url: destinationURL!.appendingPathComponent(path))
+    let encoding = URLEncoding.default
+
+    return try encoding.encode(destinationURLRequest, with: parameters)
+    }
+}
+
+//Activity relevant router
+enum Activity {
+    ....
+}
+
+}
+
+</code></pre>
 </div>
+
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">最近的文章</span>
+       <h2 class="post-list__post-title post-title"><a href="/2017/07/Problems/" title="link to Problems">Problems</a></h2>
+       <p class="excerpt">What’s the problem?[Chumi] is an attendees-focused event hosting platform, it has payment, instant messaging, and circles feed features. Due to the product is pivoting a lot of times, it leaves unneccesary code and structures. Every time when deve...&hellip;</p>
+       <div class="post-list__meta"><time datetime="2017-07-20 02:32:24 -0400" class="post-list__meta--date date">2017-07-20</time> &#8226; <span class="post-list__meta--tags tags"></span><a class="btn-border-small" href=/2017/07/Problems/>继续阅读</a></div>
+   </div>
+   
+   
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "http://localhost:4000/2017/07/API-model/";
+        this.page.identifier = "/2017/07/API-model/";
+    };
+
+    var disqus_shortname = 'vno-jekyll';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>要查看<a href="http://disqus.com/?ref_noscript"> Disqus </a>评论，请启用 JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
 
             <section class="footer">
     <footer>

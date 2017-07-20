@@ -1,0 +1,104 @@
+---
+layout: post
+title: API-Model
+date: 2017-07-20 15:32:24.000000000 +09:00
+---
+
+#### What's the problem?
+
+API is hard code on Alamofire requests, or global. It's hard to edit on one place. 
+
+####  
+
+1. We use struct to build this model, becasue struct make it unique, and we dont need to inherent the code, it only returns different apis.
+
+2. We use enum inside the struct, so we use the switch func to easily return the specific apis, each enum is a router
+
+
+````
+
+//
+//  ChumiApiClient.swift
+//  chumie
+//
+//  Created by Yitao Li on 2017-07-20.
+//  Copyright © 2017 Yitao Li. All rights reserved.
+//
+
+import Foundation
+import Alamofire
+
+struct ChumiApiClient {
+
+static let hostURL = "http://example.cloudfront.net"
+static let imgHostURL = "http://example.cloudfront.net"
+
+//member relevant router
+enum Member: URLRequestConvertible {
+
+    case login()
+    case checkEmailDuplicate()
+    case register()
+    case registerWithFacebook()
+
+    func asURLRequest() throws -> URLRequest {
+
+    var path = "/member"
+    let parameters: [String: Any] = [:]
+
+    switch self {
+
+    case .checkEmailDuplicate():
+    path = path + "/checkEmail"
+    break
+
+    case .login():
+    path = path + "/login"
+    break
+
+    case .register():
+    path = path + "/reg"
+    break
+
+    case .registerWithFacebook():
+    path = path + "/registerFromFacebook"
+    break
+
+    }
+
+
+
+
+    let destinationURL = URL(string: ChumiApiClient.hostURL)
+    let destinationURLRequest = URLRequest(url: destinationURL!.appendingPathComponent(path))
+    let encoding = URLEncoding.default
+
+    return try encoding.encode(destinationURLRequest, with: parameters)
+    }
+}
+
+//Activity relevant router
+enum Activity {
+    ....
+}
+
+}
+
+````
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
