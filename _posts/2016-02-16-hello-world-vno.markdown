@@ -1,44 +1,34 @@
 ---
 layout: post
-title: Hello World - Vno
-date: 2016-02-16 15:32:24.000000000 +09:00
+title: Problems
+date: 2017-07-20 15:32:24.000000000 +09:00
 ---
 
-#### What's this
+#### What's the problem?
 
-[Vno Jekyll](https://github.com/onevcat/vno-jekyll) is a theme for [Jekyll](http://jekyllrb.com). It is a port of my Ghost theme [vno](https://github.com/onevcat/vno), which is originally developed from [Dale Anthony's Uno](https://github.com/daleanthony/uno).
+[Chumi] is an attendees-focused event hosting platform, it has payment, instant messaging, and circles feed features. Due to the product is pivoting a lot of times, it leaves unneccesary code and structures. Every time when developers need to fix bugs or add new features, it takes a lot of time to check the code and easily causes more issues.
 
-#### Usage
+#### technical problems
 
-```bash
-$ git clone https://github.com/onevcat/vno-jekyll.git your_site
-$ cd your_site
-$ bundler install
-$ bundler exec jekyll serve
-```
+1.ARC
+2.Wrong struc, enum, class usages
+3.Unnecessary force unwrapping model properties
+4.Lack of proper memory management considerations while doing network calls within 5.view controllers
+6.Some bad coding design
+7.Lack of tests
+...
 
-Your site with `Vno Jekyll` enabled should be accessible in http://127.0.0.1:4000.
+#### What causes those issues?
 
-For more information about Jekyll, please visit [Jekyll's site](http://jekyllrb.com).
+TDD is not excueted. No code review. Tight schedule. Too many part-time developers. Lack of coding style guide.  
 
-#### Configuration
+#### What would I do?
 
-All configuration could be done in `_config.yml`. Remember you need to restart to serve the page when after changing the config file. Everything in the config file should be self-explanatory.
-
-#### Background image and avatar
-
-You could replace the background and avatar image in `assets/images` folder to change them.
-
-#### Sites using Vno
-
-[My blog](http://onevcat.com) is using `Vno Jekyll` as well, you could see how it works in real. There are some other sites using the same theme. You can find them below:
-
-| Site Name    | URL                                                |
-| ------------ | ---------------------------------------------------|
-| OneV's Den   | [http://onevcat.com](http://onevcat.com)           |
-| July Tang    | [http://blog.julytang.xyz](http://onevcat.com)     |
-
-> If you happen to be using this theme, welcome to [send me a pull request](https://github.com/onevcat/vno-jekyll/pulls) to add your site link here. :)
+1. Draw a diagram and write a doc for all kinds of files. 
+2. follow mvvm, work on model by model. 
+3. Work on view-model.
+4. Work on view controllers.
+5. Write a coding style guide.
 
 #### License
 
