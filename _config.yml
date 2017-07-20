@@ -1,10 +1,10 @@
 
 # Basic
-title: Vno Jekyll
-subtitle: A blog-orientation theme for Jekyll
-welcome_message: <a href="https://github.com/onevcat/vno-jekyll" target="_blank">Download the theme</a>
-description: Vno Jekyll is a port of my Ghost theme vno.
-creator: <a href="http://onev.cat">@onevcat</a>
+title: Alex Li Tech Blog
+subtitle: Make Chumi iOS app better
+welcome_message: <a href="https://itunes.apple.com/app/apple-store/id1118531323?mt=8" target="_blank">Download the chumi app</a>
+description: New features have been adding, old features had been removing, developers are changing, finally we found the market fit, and started to worry about code quality.
+creator: <a href="https://github.com/yitaolee/">@yitaolee</a>
 
 url: "http://vno.onevcat.com"
 
@@ -38,11 +38,8 @@ comment:
     
 # Social
 social:
-    weibo: onevcat
-    github: onevcat
-    twitter: onevcat
-    gplus: 107108267983477358170
-    mail: onev@onevcat.com
+    github: yitaolee
+    mail: yitaolee1991@qq.com
 
 # Google Analytics
 ga:
