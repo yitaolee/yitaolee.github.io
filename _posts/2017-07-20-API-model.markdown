@@ -16,7 +16,6 @@ API is hard code on Alamofire requests, or global. It's hard to edit on one plac
 
 
 ````
-
 //
 //  ChumiApiClient.swift
 //  chumie
@@ -30,60 +29,79 @@ import Alamofire
 
 struct ChumiApiClient {
 
-static let hostURL = "http://example.cloudfront.net"
-static let imgHostURL = "http://example.cloudfront.net"
+static let hostURL = "http://xxx.cloudfront.net"
+static let imgHostURL = "http://xxx.cloudfront.net"
 
-//member relevant router
-enum Member: URLRequestConvertible {
+    //member relevant router
+    enum Member: URLRequestConvertible {
 
-    case login()
-    case checkEmailDuplicate()
-    case register()
-    case registerWithFacebook()
+        case login([String: AnyObject])
+        case checkEmailDuplicate([String: AnyObject])
+        case register([String: AnyObject])
+        case registerWithFacebook([String: AnyObject])
 
-    func asURLRequest() throws -> URLRequest {
+        var method: Alamofire.HTTPMethod {
+            switch self {
+            case .login:
+            return .post
+            case .checkEmailDuplicate:
+            return .post
+            case .register:
+            return .post
+            case .registerWithFacebook:
+            return .post
+            }
+        }
 
-    var path = "/member"
-    let parameters: [String: Any] = [:]
 
-    switch self {
 
-    case .checkEmailDuplicate():
-    path = path + "/checkEmail"
-    break
+        func asURLRequest() throws -> URLRequest {
 
-    case .login():
-    path = path + "/login"
-    break
+            let router = "/Member"
 
-    case .register():
-    path = path + "/reg"
-    break
+            var path: String {
+            switch self {
+            case .login:
+            return router + "/Login"
+            case .checkEmailDuplicate:
+            return router + "/CheckEmailDuplicate"
+            case .register:
+            return router + "/RegNoInvite"
+            case .registerWithFacebook:
+            return router + "/RegFromFacebook"
+            }
+        }
 
-    case .registerWithFacebook():
-    path = path + "/registerFromFacebook"
-    break
+            let destinationURL = URL(string: ChumiApiClient.hostURL)
+            var destinationURLRequest = URLRequest(url: destinationURL!.appendingPathComponent(path))
+            destinationURLRequest.httpMethod = method.rawValue
+
+            switch self {
+
+            case .login(let parameters):
+            return try Alamofire.JSONEncoding.default.encode(destinationURLRequest, with: parameters)
+
+            case .register(let parameters):
+            return try Alamofire.URLEncoding.default.encode(destinationURLRequest, with: parameters)
+
+            case .checkEmailDuplicate(let parameters):
+            return try Alamofire.URLEncoding.default.encode(destinationURLRequest, with: parameters)
+
+            case .registerWithFacebook(let parameters):
+            return try Alamofire.URLEncoding.default.encode(destinationURLRequest, with: parameters)
+
+            }
+        }
+    }
+
+    //Activity relevant router
+    enum Activity {
 
     }
 
-
-
-
-    let destinationURL = URL(string: ChumiApiClient.hostURL)
-    let destinationURLRequest = URLRequest(url: destinationURL!.appendingPathComponent(path))
-    let encoding = URLEncoding.default
-
-    return try encoding.encode(destinationURLRequest, with: parameters)
-    }
-}
-
-//Activity relevant router
-enum Activity {
-    ....
-}
+    //other routers
 
 }
-
 ````
 
 
