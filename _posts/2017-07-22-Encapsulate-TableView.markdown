@@ -77,13 +77,6 @@ class DVBaseVC: UIViewController , UIGestureRecognizerDelegate{
 And
 
 ````
-//
-//  DVTbVC.swift
-//  chumie
-//
-//  Created by pppsy on 2016/12/15.
-//  Copyright © 2016年 Yitao Li. All rights reserved.
-//
 
 import UIKit
 import SwiftyJSON

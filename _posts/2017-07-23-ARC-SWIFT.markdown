@@ -1,0 +1,171 @@
+---
+layout: post
+title: Swift ARC
+date: 2017-07-23 15:32:24.000000000 +09:00
+---
+
+#### What's the problem?
+
+Memory is not being handle in the code.
+
+####  
+
+If self could be nil in the closure use [weak self]. you dont need it once its done.
+
+If self will never be nil in the closure use [unowned self]. 
+Only use unowned when you are positive that variable will always be around while the closure is around
+
+The only time where you really want to use [unowned self] or [weak self] is when you would create a strong reference cycle.
+A strong reference cycle is when there is a loop of ownership where objects end up owning each other (maybe through a third party) and therefore they will never be deallocated because they are both ensuring that each other stick around.
+
+Example: Making an asynchronous network request
+If you are making an asynchronous network request you do want the closure to retain self for when the request finishes. 
+That object may have otherwise been deallocated but you still want to be able to handle the request finishing.
+
+
+Moreover
+
+If you don't need self to remain alive until the closure is called, put [weak self] in, if you do, then don't put it in.
+
+And 
+
+Swift 1.2 announced a syntax called “@noescape”, this attribute indicates that a closure will only live as long as the call so there is no possibility of retain cycles. 
+That means you don’t have to worry about self being retained in closure and makes your code clean & easy-read.
+For Swift3 @noescape is defaut. Its safer now. That is why even thought the code is not handling memory properly, but it still works. LOL
+
+
+Examples:
+
+1.
+
+````
+
+FIRAuth.auth()?.signInWithCredential(credential, completion: {  [weak self]  (user: FIRUser?, error: NSError?) in
+self.activityIndicatorEnd()
+self.performSegueWithIdentifier(SEGUE_DISCOVER_VC, sender: self)
+})
+
+//
+//use [weak self]. Why? Because if the view controller was dismissed while the authorization was underway, 
+//do you really want to keep a reference to a view controller that was dismissed? Probably not in this case.
+//
+````
+
+2.
+
+````
+let menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, title: self.dropDownItems.first!, items: self.dropDownItems)
+
+    menuView.didSelectItemAtIndexHandler = {[unowned self] (indexPath: Int) -> () in
+        if indexPath == 0 {
+            self?.mode = .Closest
+            self?.sortByDistance()
+
+        } else if indexPath == 1 {
+            self?.mode = .Popular
+            self?.sortByPopularity()
+
+        } else if indexPath == 2 {
+            self?.mode = .MyPosts
+            self?.loadMyPosts()
+
+        } else {
+            print("Shouldnt get here saoihasiof")
+        }
+    }
+    
+//
+//use [unowned self] because the object's own closure is referring to itself.
+//
+````
+
+3.
+
+````
+checkUserLoggedIn { [weak self] (success) in
+    if success == false {
+    }
+}
+
+//
+//that's a completion handler. If so, you probably should use [weak self], because this could be initiated and be running by the time self is dismissed, 
+//and you don't want to have checkUserLoggedIn keep a reference to a view controller that was dismissed
+//
+````
+
+4. "@escaping"
+   
+````
+func doWork(block:()->()) {
+    print("header")
+    block()
+    print("footer")
+}
+doWork {
+    print("work")
+}
+//控制台打印的消息如下：
+//header
+//work
+//footer
+
+
+````
+
+
+However if we want this block execute after doWork, we need @escape. to mark this function can be escaping. 
+
+````
+func doWorkAsync(block: @escaping () -> ()) {
+    DispatchQueue.main.async { 
+        block()
+    }
+}
+````
+
+More examples:
+
+````
+class S {
+    var foo = "foo"
+
+    func method1() {
+        doWork {
+            print(foo)
+        }
+        foo = "bar"
+    }
+
+    func method2() {
+        doWorkAsync {
+            print(self.foo)
+        }
+        foo = "bar"
+    }
+func method3() {
+        doWorkAsync {
+            [weak self] _ in
+            print(self?.foo)
+        }
+        foo = "bar"
+    }
+
+}
+S().method1()// foo
+S().method2()// bar
+S().method3()// nil  if we dont want this doWorkA closure get self, we use weak self to make it clean after its done. so its nil.
+
+
+````
+
+
+
+
+
+
+
+
+
+
+
+
