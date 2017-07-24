@@ -298,13 +298,11 @@ import UIKit
 typealias DVTbviewTapBlock = (_ tbview:UITableView , _ indexPath:IndexPath, _ item:DVTableItem, _ cell:DVTableCell) -> Void
 typealias DVTbviewExtendBlock = (_ item:DVTableItem, _ cell:DVTableCell) -> Void
 typealias DVTbviewSimpleTapBlock = (_ item:DVTableItem) -> Void
-typealias DVTbCellHeightBlock = (_ item:DVTableItem?) -> CGFloat //废弃了
-
 
 class DVTableItem: NSObject {
     var cellClassName:String?
     var cellNibName:String?
-    var cellHeight : CGFloat = 44 //这次设计不加入 cellHeightBlock了，主要原因是这个需求很少，而且经常被滥用或者错误的使用
+    var cellHeight : CGFloat = 44 
     
     var cellData:AnyObject? //Data
     
